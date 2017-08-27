@@ -13,7 +13,7 @@
             <div class="collapse navbar-collapse">
                 <ul class="nav navbar-nav navbar-right">
                     <li> <a href="/login">Login</a></li>
-                    <li> <a href="/">LogOut</a></li>
+                    <li> <a href="/logout">LogOut</a></li>
                 </ul>
         </div>
     </nav>
@@ -21,7 +21,7 @@
     <div class="row">
         <h1 style="text-align: center;">New User Registration</h1>
         <div style="width: 30%; margin: 30px auto; ">
-            <form method="POST" action="/">
+            <form method="post" action="/signup">
                 <div class="form-group">
                     <input class="form-control" type="text" placeholder="Name" name="name"></input>
                 </div>
@@ -36,6 +36,9 @@
                 </div>
                 <div class="form-group">
                     <input class="form-control" type="text" placeholder="Github Link" name="github_link"></input>
+                </div>
+                <div class="form-group">
+                    <input class="form-control" type="password" placeholder="Password" name="password"></input>
                 </div>
                 <div class="form-group">
                     <button class="btn btn-lg btn-default btn-primary btn-block">Submit</button>

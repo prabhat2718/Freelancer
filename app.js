@@ -1,37 +1,51 @@
-var express    = require("express"),
-    app        = express(),
-    bodyParser = require("body-parser"),
-   	freelancer = require("./models/freelancer"),
-   	client     = require("./models/client"),
-    mongoose   = require("mongoose"),
-    port       = process.env.PORT || 8080;;
+var express     = require('express'),
+    app         = express(),
+    cookieParser= require('cookie-parser'),
+    bodyParser  = require('body-parser'),
+    rp          = require('request-promise');
+    mongoose    = require('mongoose'),
+    passport    = require('passport'),
+    session     = require('express-session'),
+    flash       = require('connect-flash'),
+    morgan      = require('morgan'),
+    port        = process.env.PORT || 8080;;
 
-app.use(bodyParser.urlencoded({extended : true}));
-app.set("view engine","ejs")
+//logging
+app.use(morgan('dev'));
 
 //connect mongodb
-mongoose.connect("mongodb://localhost/freelancer");
 mongoose.Promise = global.Promise;  
+mongoose.connect('mongodb://localhost/freelancer', {useMongoClient: true});
 
-//Get the default connection
-var db = mongoose.connection;
+//init body & cookie parsers
+app.use(bodyParser.urlencoded({extended : true}));
+app.use(bodyParser.json());
+app.use(cookieParser());
 
-//Bind connection to error event (to get notification of connection errors)
-db.on('error', console.error.bind(console, 'MongoDB connection error:')); 
+//set view template engine
+app.set('view engine','ejs')
 
+//init session
+app.use(session({
+    secret: 'ilovekabaab',
+    saveUninitialized: true,
+    resave: true
+}));
 
-app.get("/",function(req,res){
-   res.render("landing");
-});
+//init passport
+app.use(passport.initialize());
+app.use(passport.session());
 
-app.get("/signup",function(req,res){
-   res.render("signup");
-});
+//for flash msgs
+app.use(flash());
 
-app.get("/login",function(req,res){
-	res.render("login");
-});
+//for handling http req
+require('./routes.js')(app, passport);
 
-app.listen(port,function(){
-   console.log("Freelancer Server start"); 
+//for handling login, signup
+require('./config/passport_freelancer.js')(passport);
+// require('./config/passport_client.js')(passport);  //not implemented
+
+app.listen(port, function(){
+  console.log("Freelancer Server start at", port); 
 });

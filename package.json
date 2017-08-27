@@ -4,6 +4,7 @@
   "description": "Webster freelancer project",
   "main": "app.js",
   "scripts": {
+    "start": "node app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -17,9 +18,18 @@
   },
   "homepage": "https://github.com/mkfeuhrer/Freelancing-Webster2k17#readme",
   "dependencies": {
+    "bcrypt-nodejs": "0.0.3",
     "body-parser": "^1.17.2",
+    "connect-flash": "^0.1.1",
+    "cookie-parser": "^1.4.3",
     "ejs": "^2.5.7",
     "express": "^4.15.4",
-    "mongoose": "^4.11.8"
+    "express-session": "^1.15.5",
+    "mongoose": "^4.11.8",
+    "morgan": "^1.8.2",
+    "passport": "^0.4.0",
+    "passport-local": "^1.0.0",
+    "request": "^2.81.0",
+    "request-promise": "^4.2.1"
   }
 }
