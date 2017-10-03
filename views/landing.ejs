@@ -1,4 +1,30 @@
 <% include partials/header %>
-<h1>Landing page</h1>
-<p> Welcome to Freelancing</p>
+<h1> Welcome to Freelancing</h1>
+
+<div class="row">
+	<table class="table">
+		<thead>
+			<tr>
+				<th colspan="4">Projects</th>
+			</tr>
+			<tr>
+				<th>#</th>
+				<th>Project Name</th>
+				<th>Client</th>
+				<th>Last Bidding Date</th>
+			</tr>
+		</thead>
+	    <tbody>
+			<%  var count = 1;
+				projects.forEach(function(project){ %>
+		    	<tr>
+				<th> <%= count %> </th>
+				<td> <a href="/project/<%= project.code%>"> <%= project.name %> </a> </td>
+				<td> <%= project.clientUsername %> </td>
+				<td> <%= project.lastBiddingDate %> </td>
+		    	</tr>
+			<%	count++ }); %>
+		</tbody>
+	</table>
+</div>
 <% include partials/footer %>

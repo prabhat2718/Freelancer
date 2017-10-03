@@ -1,0 +1,36 @@
+<% include partials/header %>
+
+<div class="row">
+	Name: <%= user.name %>	</br>
+	Username: @<%= user.username %>	</br>
+	Organization: <%= user.organization %> </br>
+	Member since <%= user.joiningDate %>	</br> 
+</div>
+
+<div class="row">
+	Email: <%= user.email %> </br>
+	Mobile: <%= user.mobile %> </br>
+	Github: <%= user.githubLink %> </br>
+</div>
+
+<div class="row">
+	Details:
+	<p> <%= user.detailsFreelancer %> </p>
+	Freelancer Skills: </br>
+	<ul>
+		<% user.skillsFreelancer.forEach(function(skill){ %>
+			<li> <%= skill %> </li>
+		<% }); %>
+	</ul>
+</div>
+
+<div class="row">
+	Freelancer Projects: </br>
+	<ul>
+		<% user.projectsFreelancer.forEach(function(project){ %>
+			<li> <%= project.name %> </li>
+		<% }); %>
+	</ul>
+</div>
+
+<% include partials/footer %>

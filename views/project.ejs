@@ -1,0 +1,48 @@
+<% include partials/header %>
+
+<div class="row">
+	Name: <%= project.name %>	</br>
+	Project Code: <%= project.code %>	</br>
+	Client: <a href="/profile/<%= project.client.username%>/client"> <%= project.client.name %>	</a> </br>
+	Last Date for Bidding: <%= project.lastBiddingDate %> </br>
+	Status: <%= project.status %>	</br> 
+	Details: <%= project.details %> </br>
+</div>
+
+<div class="row">
+	<table class="table">
+		<thead>
+			<tr>
+				<th colspan="4">Bids</th>
+			</tr>
+			<tr>
+				<th>#</th>
+				<th>Freelancer</th>
+				<th>Price</th>
+				<th>Bidding date</th>
+			</tr>
+		</thead>
+	    <tbody>
+			<%  var count = 1;
+				project.bids.forEach(function(bid){ %>
+		    	<tr>
+				<th> <%= count %> </th>
+				<td> <a href="/profile/<%= bid.freelancerUsername%>/freelancer"> <%= bid.freelancerUsername %> </a> </td>
+				<td> <%= bid.price %> </td>
+				<td> <%= bid.biddingDate %> </td>
+		    	</tr>
+			<%	count++ }); %>
+		</tbody>
+	</table>
+</div>
+
+<% if(loggedIn && project.clientUsername != username){ %>
+	<div class="row">
+		<form class="form-inline">
+			<label class="form-control" for="price">Rs.</label>
+			<input type="Number" class="form-control" name="price" id="price" placeholder="1000">
+			<button type="submit" class="btn btn-primary">Submit</button>
+		</form>
+	</div>
+<% } %>
+<% include partials/footer %>

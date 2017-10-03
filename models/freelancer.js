@@ -6,14 +6,22 @@ var Schema = mongoose.Schema;
 var FreelancerSchema = new Schema({
     name: String,
     username: String,
+    organisation: String,
+    gender: String, 
+    mobile: String,
     email: String,
-    mobile:Number,
-    github_link:String,
-    password:String
+    githubLink: String,
+    password: String,
+    joiningDate : { type: Date, default: Date.now },
+    detailsFreelancer: String,
+    detailsClient: String,
+    skillsClient: [String],
+    skillsFreelancer: [String],
+    totalClientRating: {type: Number, default: 0},
+    totalFreelancerRating: {type: Number, default: 0},
+    totalClientCount: {type: Number, default: 0},
+    totalFreelancerCount: {type: Number, default: 0}
 });
-
-// var freelancer = mongoose.model("freelancer",FreelancerSchema);	why is this needed?
-
 
 FreelancerSchema.methods.generateHash = function(password){
 	return bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);

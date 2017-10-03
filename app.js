@@ -8,7 +8,7 @@ var express     = require('express'),
     session     = require('express-session'),
     flash       = require('connect-flash'),
     morgan      = require('morgan'),
-    port        = process.env.PORT || 8080;;
+    port        = process.env.PORT || 8080;
 
 //logging
 app.use(morgan('dev'));
@@ -47,5 +47,5 @@ require('./config/passport_freelancer.js')(passport);
 // require('./config/passport_client.js')(passport);  //not implemented
 
 app.listen(port, function(){
-  console.log("Freelancer Server start at", port); 
+  console.log("Freelancer Server started at", port); 
 });
