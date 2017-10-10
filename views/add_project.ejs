@@ -1,61 +1,18 @@
 <% include partials/header %>
 
-<script>
-
-    $(document).ready(function() {        
-        $('#projectcode').change(function(event){    
-            $.ajax({
-                url: '/checkprojectcode',
-                type: 'POST',
-                data: { projectcode: $('#projectcode').val() },
-                datatype: 'json',
-                success: function(data) {
-                    //console.log(data);
-                    if(data.result == 'yes'){
-                        $('#projectcoderesult').html('Project Code is available.');
-                        $('#projectcoderesult').removeClass();
-                        $('#projectcoderesult').addClass('alert alert-success');
-                    }else if(data.result == 'no'){
-                        $('#projectcoderesult').html('Project Code is not available.');
-                        $('#projectcoderesult').removeClass();
-                        $('#projectcoderesult').addClass('alert alert-danger');
-                    }
-                },
-                error: function(){
-                    console.log('some error');
-                }
-            });        
-        });
-    });
-
-</script>
-
 <div class="row">
     <h1 style="text-align: center;">Add Project</h1>
     <div style="width: 30%; margin: 30px auto; ">
         <form method="post" action="/addproject">
             <div class="form-group">
-                <input class="form-control" type="text" placeholder="Project Code" id="projectcode" name="code"></input>
-            </div>
-            <div id="projectcoderesult"></div>
-            <div class="form-group">
                 <input class="form-control" type="text" placeholder="Name" name="name"></input>
             </div>
             <div class="form-group">
-                <input class="form-control" type="textarea" rows="4" placeholder="Details" name="details"></input>
+                <input class="form-control" type="text" placeholder="Project Code" name="code"></input>
             </div>
             <div class="form-group">
-                <input class="form-control" type="number" placeholder="Min Allowed Bid" name="bidLowerbound"></input>
-            </div> 
-            <div class="form-group">
-                <input class="form-control" type="number" placeholder="Max Allowed Bid" name="bidUpperbound"></input>
+                <input class="form-control" type="textarea" placeholder="Details" name="details"></input>
             </div>
-            <!--
-            <div class="form-group">
-                <label for="image">Upload Image (PNG format only):</label>
-                <input class="form-control" type="file" name="image" id="image"></input>
-            </div>
-            -->
             <div class="form-group">
                 <input class="form-control" type="date" placeholder="Last Bidding Date" name="lastBiddingDate" id="biddingDate">
                 </input>
@@ -64,7 +21,7 @@
                 <button class="btn btn-lg btn-default btn-primary btn-block">Submit</button>
             </div>    
         </form>
-        <% if(msg != null && msg != ""){
+        <% if(msg != ""){
         	if(msg == "Project successfully added."){
         		%>
             	<div class="alert alert-success alert-dismissable"><%= msg %></div> 

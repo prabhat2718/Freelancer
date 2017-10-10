@@ -1,11 +1,12 @@
-var mongoose = require('mongoose');
+var mongoose = require("mongoose");
 
-var BidSchema = new mongoose.Schema({
-    username: String,
+var Schema = mongoose.Schema;
+
+var BidSchema = new Schema({
+    freelanceUsername: String,
     projectCode: String,
-    date : { type: Date, default: Date.now },
-    price: Number,
-    status: {type: String, default: 'pending'}
+    biddingDate : { type : Date, default: Date.now },
+    price: Number
 });
 
 module.exports = mongoose.model('bid', BidSchema);

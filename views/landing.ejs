@@ -16,10 +16,10 @@
 		</thead>
 	    <tbody>
 			<%  var count = 1;
-				projects.forEach( function(project){ %>
+				projects.forEach(function(project){ %>
 		    	<tr>
 				<th> <%= count %> </th>
-				<td> <a href="/project/<%= project.code %>"> <%= project.name %> </a> </td>
+				<td> <a href="/project/<%= project.code%>"> <%= project.name %> </a> </td>
 				<td> <%= project.clientUsername %> </td>
 				<td> <%= project.lastBiddingDate %> </td>
 		    	</tr>

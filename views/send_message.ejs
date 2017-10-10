@@ -1,0 +1,36 @@
+<% include partials/header %>
+
+<div class="row">
+    <h1 style="text-align: center;">Send Message</h1>
+    <div style="width: 30%; margin: 30px auto; ">
+        <form method="post" action="/send_message">
+            <% if( receiver != "") { %>
+                <div class="form-group">
+                    <input class="form-control" type="text" value=<%= receiver %> name="receiver"></input>
+                </div>
+            <% } else { %>
+                <div class="form-group">
+                    <input class="form-control" type="text" placeholder="Username" name="receiver"></input>
+                </div>
+            <% } %>
+            <div class="form-group">
+                <input class="form-control" type="text" placeholder="Message" name="message"></input>
+            </div> 
+            <div class="form-group">
+                <button class="btn btn-lg btn-default btn-primary btn-block">Send</button>
+            </div>   
+        </form>
+
+        <% if(msg != ""){
+            if(msg == "Message sent successfully."){
+                %>
+                <div class="alert alert-success alert-dismissable"><%= msg %></div> 
+            <% } else{ %>
+                <div class="alert alert-danger alert-dismissable"><%= msg %></div>
+            <%  }   %>
+        <% } %>
+
+    </div>
+</div>
+
+<% include partials/footer %>
