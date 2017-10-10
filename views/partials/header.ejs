@@ -10,6 +10,16 @@
         <script src="/js/bootstrap.min.js"></script>
 
         <script src="/js/rangeslider.min.js"></script>
+
+        <script>
+
+            $(document).ready( function(){
+                $ajax({
+
+                });
+            });
+            
+        </script>
     </head>
     <body>
     <nav class="navbar navbar-default">
@@ -24,11 +34,11 @@
                 <% } else { console.log(notif) %> 
                     <p class="navbar-text"><%= username %></p>
                     <div class="dropdown">
-                        <button class="btn btn-default dropdown-toggle" type="button" id="notificationBtn" 
+                        <button class="btn btn-default dropdown-toggle" type="button" id="notifBtn" 
                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                        Notifications   <span class="badge badge-success"> <%= notif.length %> </span>
+                        Notifications   <span id="notifCnt" class="badge badge-success"> </span>
                         </button>
-                        <ul class="dropdown-menu" aria-labelledby="notifications">
+                        <ul class="dropdown-menu" aria-labelledby="notifications"  id="notifList">
                             <li><a href="/notifications"> See All </a></li>
                         </ul>
                     </div>

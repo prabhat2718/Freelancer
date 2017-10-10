@@ -45,10 +45,10 @@ module.exports = function(app, passport){
 				if(!err){
 					// console.log(results);
 					res.render('landing', {title: 'Freelancer2k17 - Home', loggedIn: req.isAuthenticated(), 
-						username: req.session.username, projects: results, notif: getNotif(req.session.username, req.isAuthenticated())});
+						username: req.session.username, projects: results});
 				}else
 					res.render('not_found', {title: 'Not Found', loggedIn: req.isAuthenticated(), 
-						username: req.session.username, projects: [], notif: []});
+						username: req.session.username, projects: []});
 			}
 		);
 	    // res.render('landing.ejs', {title: 'Home - Freelancer2k17', loggedIn: req.isAuthenticated(), username: req.session.username});
@@ -129,10 +129,10 @@ module.exports = function(app, passport){
 					// console.log(results);
 					res.render('profile_freelancer', {title: 'Freelancer Profile - ' + req.params.username, 
 						loggedIn: req.isAuthenticated(), username: req.session.username,
-						user: results[0], notif: getNotif( req.session.username, req.isAuthenticated() )});
+						user: results[0]});
 				}else
 					res.render('not_found', {title: 'Not Found', loggedIn: req.isAuthenticated(), 
-						username: req.session.username, notif: getNotif( req.session.username, req.isAuthenticated() )});
+						username: req.session.username});
 			}
 		);
 	});
@@ -156,10 +156,10 @@ module.exports = function(app, passport){
 					// console.log(results);
 					res.render('profile_client', {title: 'Client Profile - ' + req.params.username, 
 						loggedIn: req.isAuthenticated(), username: req.session.username,
-						user: results[0], notif: getNotif(req.session.username)});
+						user: results[0]});
 				}else
 					res.render('not_found', {title: 'Not Found', loggedIn: req.isAuthenticated(), 
-						username: req.session.username, notif: getNotif( req.session.username, req.isAuthenticated() )});
+						username: req.session.username});
 			}
 		);
 	});
@@ -180,7 +180,7 @@ module.exports = function(app, passport){
 		);
 		}else{
 			res.render('not_found', {title: 'Not Found', loggedIn: req.isAuthenticated(), 
-				username: req.session.username, notif: getNotif( req.session.username, req.isAuthenticated() )});
+				username: req.session.username});
 		}
 	});
 
@@ -213,10 +213,10 @@ module.exports = function(app, passport){
 					// console.log(results);
 					res.render('project', {title: 'Project - ' + req.params.projectcode, 
 						loggedIn: req.isAuthenticated(), username: req.session.username,
-						project: results[0], notif: getNotif( req.session.username, req.isAuthenticated() )});
+						project: results[0]});
 				}else
 					res.render('not_found', {title: 'Not Found', loggedIn: req.isAuthenticated(), 
-						username: req.session.username, notif: getNotif( req.session.username, req.isAuthenticated() )});
+						username: req.session.username});
 			}
 		);
 	});
@@ -295,7 +295,7 @@ module.exports = function(app, passport){
 		if(!req.isAuthenticated())
 			res.redirect('/');
 		res.render('add_project', {title: 'Add Project', loggedIn: req.isAuthenticated(), 
-			username: req.session.username, msg: "", notif: getNotif(req.session.username, req.isAuthenticated())});
+			username: req.session.username, msg: ""});
 	});
 
 	app.post('/addproject', function(req, res){
@@ -333,7 +333,7 @@ module.exports = function(app, passport){
 				msg = "Project successfully added."
 			}
 			res.render('add_project', {title: 'Add Project', loggedIn: req.isAuthenticated(), 
-				username: req.session.username, msg: msg, notif: getNotif( req.session.username, req.isAuthenticated() )});
+				username: req.session.username, msg: msg});
 		});
 	});
 
