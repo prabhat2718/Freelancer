@@ -1,15 +1,15 @@
-var mongoose = require("mongoose");
+var mongoose = require('mongoose');
 
-var Schema = mongoose.Schema;
-
-var ProjectSchema = new Schema({
+var ProjectSchema = new mongoose.Schema({
     name: String,
     code: String,
     clientUsername: String,
     freelancerUsername: String,
     details: String,
+    bidLowerbound: Number,
+    bidUpperbound: Number,
     lastBiddingDate : Date,
-    status: {type: String, default: "open"}
+    status: {type: String, default: 'open'}
 });
 
 module.exports = mongoose.model('project', ProjectSchema);

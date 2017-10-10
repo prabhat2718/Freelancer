@@ -1,9 +1,7 @@
-var mongoose = require("mongoose");
+var mongoose = require('mongoose');
 var bcrypt = require('bcrypt-nodejs');
 
-var Schema = mongoose.Schema;
-
-var FreelancerSchema = new Schema({
+var FreelancerSchema = new mongoose.Schema({
     name: String,
     username: String,
     organisation: String,

@@ -1,12 +1,35 @@
 <% include partials/header %>
 
+<script>
+
+    $( document ).ready(function() {
+        $('input[type="range"]').rangeslider({
+            polyfill:false,
+            onInit: function() {
+            	$('#sliderval').html( $('#slider').val() );
+            },
+            onSlide: function(position, value) {
+            	$('#sliderval').html( value );
+            }
+        });
+    });
+
+</script>
+
 <div class="row">
 	Name: <%= project.name %>	</br>
 	Project Code: <%= project.code %>	</br>
 	Client: <a href="/profile/<%= project.client.username%>/client"> <%= project.client.name %>	</a> </br>
 	Last Date for Bidding: <%= project.lastBiddingDate %> </br>
-	Status: <%= project.status %>	</br> 
+	Bidding Status: <%= project.status %>	</br> 
+	<% 
+	if(project.status == 'closed'){
+	%>
+		Freelancer Selected: <%= project.freelancerUsername %> </br>
+	<%
+	}%>
 	Details: <%= project.details %> </br>
+	<!-- Image: <img src="../images/project/<%= project.code %>" alt="No Image Available" style="height=200px; width=200px;"> -->
 </div>
 
 <div class="row">
@@ -23,26 +46,55 @@
 			</tr>
 		</thead>
 	    <tbody>
-			<%  var count = 1;
-				project.bids.forEach(function(bid){ %>
-		    	<tr>
+			<%  
+			var count = 1;
+			project.bids.forEach(function(bid){ %>
+	    	<tr>
 				<th> <%= count %> </th>
-				<td> <a href="/profile/<%= bid.freelancerUsername%>/freelancer"> <%= bid.freelancerUsername %> </a> </td>
+				<td> <a href="/profile/<%= bid.username %>/freelancer"> <%= bid.username %> </a> </td>
 				<td> <%= bid.price %> </td>
-				<td> <%= bid.biddingDate %> </td>
-		    	</tr>
-			<%	count++ }); %>
+				<td> <%= bid.date %> </td><%
+				if(loggedIn && project.status == 'open' && project.clientUsername == username){%>
+					<td>
+					<form method="post" action="/acceptbid/<%= project.code %>">
+						<button type="submit" class="btn btn-primary" name="acceptedBid" value="<%= bid.username %>">Accept</button>
+					</form>
+					</td>	
+				<%
+				}%>
+	    	</tr>
+			<%	
+			count++ }); %>
 		</tbody>
 	</table>
 </div>
 
-<% if(loggedIn && project.clientUsername != username){ %>
-	<div class="row">
-		<form class="form-inline">
-			<label class="form-control" for="price">Rs.</label>
-			<input type="Number" class="form-control" name="price" id="price" placeholder="1000">
-			<button type="submit" class="btn btn-primary">Submit</button>
-		</form>
-	</div>
-<% } %>
+<% 
+if(project.lastBiddingDate >= (new Date())){ 
+	if(loggedIn && project.clientUsername != username){%>
+		<div class="row">
+			<form method="post" action="/project/<%= project.code %>">
+				<div class="col-lg-4">
+					<input type="range" id="slider" name="price" 
+						min="<%= project.bidLowerbound %>" 
+						max="<%= project.bidUpperbound %>" 
+						step=10
+						data-orientation="horizontal"
+					>
+				</div>
+				<div class="col-lg-1">
+					<label for="price"> Rs: <span id="sliderval"></span> </label>
+				</div>
+				<div class="col-lg-2">
+					<button type="submit" class="btn btn-primary">Bid</button>
+				</div>
+			</form>
+		</div>
+	<%
+	} 
+}else{ %>
+	<p>The Bidding is over folks!</p>
+<% 
+}%>
+
 <% include partials/footer %>

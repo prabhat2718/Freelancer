@@ -1,13 +1,45 @@
 <% include partials/header %>
+
+<script>
+
+    $(document).ready(function() {        
+        $('#username').change(function(event){    
+            $.ajax({
+                url: '/checkusername',
+                type: 'POST',
+                data: { username: $('#username').val() },
+                datatype: 'json',
+                success: function(data) {
+                    //console.log(data);
+                    if(data.result == 'yes'){
+                        $('#usernameresult').html('Username is available.');
+                        $('#usernameresult').removeClass();
+                        $('#usernameresult').addClass('alert alert-success');
+                    }else if(data.result == 'no'){
+                        $('#usernameresult').html('Username is not available.');
+                        $('#usernameresult').removeClass();
+                        $('#usernameresult').addClass('alert alert-danger');
+                    }
+                },
+                error: function(){
+                    console.log('some error');
+                }
+            });        
+        });
+    });
+
+</script>
+
 <div class="row">
     <h1 style="text-align: center;">Sign Up</h1>
     <div style="width: 30%; margin: 30px auto; ">
         <form method="post" action="/signup">
             <div class="form-group">
-                <input class="form-control" type="text" placeholder="Name" name="name"></input>
+                <input class="form-control" type="text" placeholder="Username" id="username" name="username" required></input>
             </div>
+            <div id="usernameresult"></div>
             <div class="form-group">
-                <input class="form-control" type="text" placeholder="Username" name="username"></input>
+                <input class="form-control" type="text" placeholder="Name" name="name"></input>
             </div>
             <div class="form-group">
                 <input class="form-control" type="email" placeholder="Email" name="email"></input>
@@ -27,6 +59,7 @@
             <div class="form-group">
                 <button class="btn btn-lg btn-default btn-primary btn-block">Submit</button>
             </div>    
+            <a href="/login/facebook" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">Signup using Facebook</a>    
         </form>
         <% if(msg != ""){ %> 
             <div class="alert alert-danger alert-dismissable"><%= msg %></div>

@@ -1,7 +1,9 @@
 var LocalStrategy = require('passport-local').Strategy;
+var FbStrategy = require('passport-facebook').Strategy;
 var User = require('../models/freelancer.js');
 
 module.exports = function(passport){
+
 	passport.serializeUser(function(user, done){
 		done(null, user.id);
 	});
@@ -11,6 +13,24 @@ module.exports = function(passport){
 			done(err, user);
 		});
 	});
+
+	//*************BUGGY******************
+	//for fb auth
+	passport.use(new FbStrategy({
+			clientID: process.env.CLIENT_ID,
+			clientSecret: process.env.CLIENT_SECRET,
+			callbackURL: 'http://localhost:8080/login/facebook/callback'
+		},
+		function(accessToken, refreshToken, profile, done) {
+			console.log('profile=');
+			console.log(profile);
+			return done(null, profile);
+			// User.findOrCreate(..., function(err, user) {
+		 //      if (err) { return done(err); }
+		 //      done(null, user);
+		 //    });
+		}));
+	//*************BUGGY******************
 
 	//for signup
 	passport.use('local-signup', new LocalStrategy({passReqToCallback: true},
