@@ -1,28 +1,16 @@
 module.exports = function(app, passport){
-
-	var Notification = require('./models/notification.js');
-
-	function getNotif(username, auth){
-		if(username == null || username == '' || !auth)
-			return [];
-		var notif = [];
-		Notification.aggregate(
-			[
-				{	"$match" : {username: username, seen: false}	},
-				{	"$sort" : {"date" : -1}	},
-			],
-			function(err, results){
-				if(!err){
-					console.log('results = ');
-					console.log(results);
-					notif = results;
-				}
-			}
-		);
-		console.log('notif = ');
-		console.log(notif);
-		return notif;
-	}
+	var multer  = require('multer') ;
+	var storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'public/images')
+    },
+    /*
+    filename: function (req, file, cb) {
+        cb(null, file. )
+    }*/
+	});
+	var upload = multer({ storage: storage });
+	//var upload = multer({ dest: 'uploads/' }) ;
 
 	app.get('/', function(req, res){
 		var Project = require('./models/project.js');
@@ -43,17 +31,28 @@ module.exports = function(app, passport){
 			],
 			function(err, results){
 				if(!err){
-					// console.log(results);
+					console.log(results);
 					res.render('landing', {title: 'Freelancer2k17 - Home', loggedIn: req.isAuthenticated(), 
 						username: req.session.username, projects: results});
 				}else
-					res.render('not_found', {title: 'Not Found', loggedIn: req.isAuthenticated(), 
+					res.render('not_found', {title: 'Not Found', loggedIn: req.isAuthenticated, 
 						username: req.session.username, projects: []});
 			}
 		);
-	    // res.render('landing.ejs', {title: 'Home - Freelancer2k17', loggedIn: req.isAuthenticated(), username: req.session.username});
+	    //res.render('landing.ejs', {title: 'Home - Freelancer2k17', loggedIn: req.isAuthenticated(), username: req.session.username});
 	});
 
+	app.get( '/messages' , function( req , res ) {
+		if(!req.isAuthenticated())
+			res.redirect('/');
+	    var Message = require('./models/message.js') ;
+		Message.find({receiver:req.session.username} , function( err , messages ) {
+			res.render('messages' , { title: 'Messages' ,loggedIn: req.isAuthenticated(), 
+			username: req.session.username , messages: messages }) ;
+		}) ;
+		
+	});
+	
 	app.get('/signup',function(req, res){
 		if(req.isAuthenticated())
 			res.redirect('/');
@@ -66,7 +65,7 @@ module.exports = function(app, passport){
 	    res.render('login', {title: 'Log In - Freelancer2k17', loggedIn: false, msg: req.flash('loginMsg')});
 	});
 
-	app.post('/signup', passport.authenticate('local-signup', {
+	app.post('/signup', upload.single('profile_picture') , passport.authenticate('local-signup', {
 		successRedirect: '/',
 		failureRedirect: '/signup',
 		failureFlash: true
@@ -78,41 +77,9 @@ module.exports = function(app, passport){
 		failureFlash: true
 	}));
 
-	//fb auth
-	app.get('/login/facebook', passport.authenticate('facebook', { scope: ['email', 'public_profile']}));
-
-	app.get('/login/facebook/callback', passport.authenticate('facebook', { failureRedirect: '/login' }), function(req, res) {
-		res.redirect('/');
-	});
-
-	app.post('/checkusername', function(req, res){
-		var User = require('./models/freelancer.js');
-		User.findOne({username: req.body.username}, function(err, user){
-			if(err)
-				res.status(200).json({ result: 'err' });
-			else if(user)
-				res.status(200).json({ result: 'no' });
-			else
-				res.status(200).json({ result: 'yes' });
-		});
-	});
-
-	app.post('/checkprojectcode', function(req, res){
-		var Project = require('./models/project.js');
-		Project.findOne({code: req.body.projectcode}, function(err, project){
-			if(err)
-				res.status(200).json({ result: 'err' });
-			else if(project)
-				res.status(200).json({ result: 'no' });
-			else
-				res.status(200).json({ result: 'yes' });
-		});
-	});
-
-
 	app.get('/profile/:username/freelancer', function(req, res){
-		var User = require('./models/freelancer.js');
-		User.aggregate(
+		var Users = require('./models/freelancer.js');
+		Users.aggregate(
 			[
 				{	"$match" : {"username" : req.params.username}	},
 				{
@@ -125,8 +92,8 @@ module.exports = function(app, passport){
 				},
 			],
 			function(err, results){
-				if(!err && results.length > 0){
-					// console.log(results);
+				if(results.length > 0){
+					console.log(results);
 					res.render('profile_freelancer', {title: 'Freelancer Profile - ' + req.params.username, 
 						loggedIn: req.isAuthenticated(), username: req.session.username,
 						user: results[0]});
@@ -138,8 +105,8 @@ module.exports = function(app, passport){
 	});
 
 	app.get('/profile/:username/client', function(req, res){
-		var User = require('./models/freelancer.js');
-		User.aggregate(
+		var Users = require('./models/freelancer.js');
+		Users.aggregate(
 			[
 				{	"$match" : {"username" : req.params.username}	},
 				{
@@ -151,37 +118,18 @@ module.exports = function(app, passport){
 					} 
 				}
 			],
+
 			function(err, results){
 				if(!err && results.length > 0){
-					// console.log(results);
+					console.log(results);
 					res.render('profile_client', {title: 'Client Profile - ' + req.params.username, 
 						loggedIn: req.isAuthenticated(), username: req.session.username,
-						user: results[0]});
+						user: results[0] });
 				}else
 					res.render('not_found', {title: 'Not Found', loggedIn: req.isAuthenticated(), 
-						username: req.session.username});
+						username: req.session.username });
 			}
 		);
-	});
-
-	app.get('/notifications', function(req, res){
-		if( req.isAuthenticated() ){
-			Notification.aggregate(
-			[
-				{	"$match" : {username: req.session.username}	},
-				{	"$sort" : {"date" : -1}	},
-			],
-			function(err, results){
-				if(!err){
-					res.render('notif', {title: 'All Notifications', loggedIn: req.isAuthenticated(),
-					username: req.session.username, notif: results});
-				}
-			}
-		);
-		}else{
-			res.render('not_found', {title: 'Not Found', loggedIn: req.isAuthenticated(), 
-				username: req.session.username});
-		}
 	});
 
 	app.get('/project/:projectcode', function(req, res){
@@ -209,86 +157,19 @@ module.exports = function(app, passport){
 			],
 			function(err, results){
 				if(!err && results.length > 0){
-					// console.log('results = ')
-					// console.log(results);
+					console.log(results);
 					res.render('project', {title: 'Project - ' + req.params.projectcode, 
 						loggedIn: req.isAuthenticated(), username: req.session.username,
 						project: results[0]});
 				}else
-					res.render('not_found', {title: 'Not Found', loggedIn: req.isAuthenticated(), 
+					res.render('not_found', {title: 'Not Found', loggedIn: req.isAuthenticated, 
 						username: req.session.username});
 			}
 		);
 	});
 
 	app.post('/project/:projectcode', function(req, res){
-		// console.log('req.body = ')
-		// console.log(req.body);
-		var Bid = require('./models/bid.js');
-		Bid.findOne({username: req.session.username, projectCode: req.params.projectcode}, function(err, bid){
-			if(err){
-
-			} 
-			else if(bid){
-				bid.date = Date();
-				bid.price = req.body.price;
-				bid.save();
-			} 
-			else{
-				var newBid = new Bid();
-				newBid.username = req.session.username;
-				newBid.projectCode = req.params.projectcode;
-				newBid.date = Date();
-				newBid.price = req.body.price;
-				newBid.save(function(err){
-					if(err)
-						return err;
-				});
-			}
-			res.redirect('/project/'+req.params.projectcode);
-		});
-	});
-
-	app.post('/acceptbid/:projectcode', function(req, res){
-		// console.log('req.body = ');
-		// console.log(req.body);
-		var Bid = require('./models/bid.js');
-		Bid.findOne({username: req.body.acceptedBid, projectCode: req.params.projectcode}, function(err, bid){
-			if(err){
-			} 
-			else if(bid){
-				bid.status='accepted';
-				bid.save(function(err){
-					if(err)
-						return err;
-				});
-				var Project = require('./models/project.js');
-				Project.findOne({code: req.params.projectcode}, function(err, project){
-					if(err){
-					}
-					else if(project){
-						project.freelancerUsername = req.body.acceptedBid;
-						project.status = 'closed';
-						project.save(function(err){
-							if(err)
-								return err;
-						});
-					}
-					else{
-					}
-				});
-				var newNotif = new Notification();
-				newNotif.username = bid.username;
-				newNotif.content = 'You bid for Project ' + bid.projectCode + ' has been accepted';
-				newNotif.link = '/project/' + bid.projectCode;
-				newNotif.save(function(err){
-					if(err)
-						return err;
-				});
-			}else{
-			}
-			res.redirect('/project/'+req.params.projectcode);
-		});
+		
 	});
 
 	app.get('/addproject', function(req, res){
@@ -296,6 +177,20 @@ module.exports = function(app, passport){
 			res.redirect('/');
 		res.render('add_project', {title: 'Add Project', loggedIn: req.isAuthenticated(), 
 			username: req.session.username, msg: ""});
+	});
+
+	app.get( '/send_message/:receiver' , function( req, res) {
+		if(!req.isAuthenticated())
+			res.redirect('/');
+		res.render('send_message', {title: 'Send Message', loggedIn: req.isAuthenticated(), 
+		username: req.session.username, msg: "", receiver:req.params.receiver});
+	});
+
+	app.get( '/send_message' , function( req, res) {
+		if(!req.isAuthenticated())
+			res.redirect('/');
+		res.render('send_message', {title: 'Send Message', loggedIn: req.isAuthenticated(), 
+			username: req.session.username, msg: "", receiver:"" });
 	});
 
 	app.post('/addproject', function(req, res){
@@ -312,24 +207,12 @@ module.exports = function(app, passport){
 				newProject = new Project();
 				newProject.name = req.body.name;
 				newProject.code = req.body.code;
-				newProject.clientUsername = req.session.username;
 				newProject.lastBiddingDate = req.body.lastBiddingDate;
 				newProject.details = req.body.details;
-				newProject.bidLowerbound = req.body.bidLowerbound;
-				newProject.bidUpperbound = req.body.bidUpperbound;
+				newProject.clientUsername = req.session.username;
 				newProject.save(function(err){
-					if(err)
-						return err;
+					
 				});
-				// var img = req.files.image;
-				// console.log(img);
-				// if(img.mimetype=='.png'){
-				// 	img.mv('./images/project/'+req.body.code+'.png', function(err){
-				// 		if(err)
-				// 			console.log(err);
-				// }else
-				// 		msg = "Only PNG format images are accepted."
-				// 	});
 				msg = "Project successfully added."
 			}
 			res.render('add_project', {title: 'Add Project', loggedIn: req.isAuthenticated(), 
@@ -337,9 +220,53 @@ module.exports = function(app, passport){
 		});
 	});
 
+	app.post( '/send_message' , function( req, res) {
+		if(!req.isAuthenticated())
+			res.redirect('/');
+		var Message = require('./models/message.js');
+		var Freelancer = require( './models/freelancer.js') ;
+		Freelancer.findOne({username: req.body.receiver}, function(err, freelancer){
+			var msg;
+			if(err)	
+				msg = "Error!";
+			else if( req.session.username == req.body.receiver )
+				msg = "Why do you want to send message to yourself?" ;
+			else if(freelancer)
+			{
+				newMessage = new Message();
+				newMessage.sender = req.session.username ;
+				newMessage.receiver = req.body.receiver ;
+				newMessage.message = req.body.message ;
+				newMessage.save(function(err){
+					
+				});
+				msg = "Message sent successfully." ;
+			}
+			else{
+				msg = "No such user." ;	
+			}
+			res.render('send_message', {title: 'Send Message', loggedIn: req.isAuthenticated(), 
+				username: req.session.username, msg: msg, receiver:"" });
+		});
+	}) ;
+
 	app.get('/logout', function(req, res){
 		req.logout();
 		res.redirect('/');
 	});
+	
+	
+	//Display details of the client
+	app.get( "/profile/client/:username" , function( req , res ) {
+	  mongoose.model('clients').find( { username : req.params.username } , function( err , client ) {
+	    res.render( 'clientProfile' , { client : client } ) ;
+	  }) ;
+	}) ;
 
+	//Display details of the freelancer
+	app.get( "/profile/freelancer/:username" , function( req , res ){
+	  mongoose.model('freelancers').find( { username : req.params.username } , function( err , freelancer ) {
+	    res.render( 'freelancerProfile' , { freelancer : freelancer } ) ;
+	  }) ;
+	} ) ;
 };

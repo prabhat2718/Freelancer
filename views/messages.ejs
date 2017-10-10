@@ -1,0 +1,33 @@
+<% include partials/header %>
+<h1> Welcome to Freelancing</h1>
+
+<div class="row">
+	<table class="table">
+		<thead>
+			<tr>
+				<th colspan="5">Messages</th>
+			</tr>
+			<tr>
+				<th>#</th>
+				<th>Sender</th>
+				<th>Message</th>
+				<th>Date</th>
+				<th>*</th>
+			</tr>
+		</thead>
+	    <tbody>
+			<%  var count = 1;
+				messages.forEach(function(message){ %>
+		    	<tr>
+				<th> <%= count %> </th>
+				<td> <%= message.sender %> </td>
+				<td> <%= message.message %> </td>
+				<td> <%= message.date %> </td>
+				<td> <a href="/send_message/<%= message.sender %>">Reply</a> </td>
+				
+		    	</tr>
+			<%	count++ }); %>
+		</tbody>
+	</table>
+</div>
+<% include partials/footer %>

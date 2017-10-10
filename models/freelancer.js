@@ -1,7 +1,9 @@
-var mongoose = require('mongoose');
+var mongoose = require("mongoose");
 var bcrypt = require('bcrypt-nodejs');
 
-var FreelancerSchema = new mongoose.Schema({
+var Schema = mongoose.Schema;
+
+var FreelancerSchema = new Schema({
     name: String,
     username: String,
     organisation: String,
@@ -10,6 +12,7 @@ var FreelancerSchema = new mongoose.Schema({
     email: String,
     githubLink: String,
     password: String,
+    dob: Date,
     joiningDate : { type: Date, default: Date.now },
     detailsFreelancer: String,
     detailsClient: String,
@@ -18,7 +21,8 @@ var FreelancerSchema = new mongoose.Schema({
     totalClientRating: {type: Number, default: 0},
     totalFreelancerRating: {type: Number, default: 0},
     totalClientCount: {type: Number, default: 0},
-    totalFreelancerCount: {type: Number, default: 0}
+    totalFreelancerCount: {type: Number, default: 0},
+    profile_picture: String
 });
 
 FreelancerSchema.methods.generateHash = function(password){
